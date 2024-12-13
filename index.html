@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>天気情報と酒情報</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+  <h1>天気と酒のペアリング</h1>
+  <p>天気: <span id="weather"></span></p>
+  <p>気温: <span id="temperature"></span></p>
+
+  <!-- 気温による表示分岐要素 -->
+  <div id="sake-info"></div>
+
+  <script>
+    function getPositionSuccess(position) {
+          //  console.log(position);
+           const lat = position.coords.latitude;
+           const lng = position.coords.longitude;
+           $('#latitude').text(lat);
+           $('longitude').text(lng);
+      const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=ed50ac1b3c2cd85da9155d440c24faa0&units=metric`;
+    }
+
+    // 天気情報取得
+    axios.get(weatherUrl)
+      .then((response) => {
+        const data = response.data;
+
+        // 天気データをHTMLに表示
+        document.getElementById("weather").innerText = data.weather[0].main;
+        document.getElementById("temperature").innerText = `${data.main.temp} °C`;
+
+    //     // 気温による条件分岐で酒情報を表示
+    //     const sakeInfoDiv = document.getElementById("sake-info");
+    //     if (data.main.temp >= 10) {
+    //       // 気温10度以上の場合
+    //       sakeInfoDiv.innerHTML = `
+    //         <script src="https://kioke.sakenowa.com/widget/widget.js"></script>
+    //         <div data-sakenowa-brand-key="9SRlWm5" data-sakenowa-layout="1"></div>
+    //       `;
+    //     } else {
+    //       // 気温10度未満の場合
+    //       sakeInfoDiv.innerHTML = `
+    //         <script src="https://kioke.sakenowa.com/widget/widget.js"></script>
+    //         <div data-sakenowa-brand-key="6b1PfAJ" data-sakenowa-layout="1"></div>
+    //       `;
+    //     }
+    //   })
+
+//     function loadScript(src) {
+//   const script = document.createElement("script");
+//   script.src = src;
+//   document.body.appendChild(script);
+// }
+    if (data.main.temp >= 10) {
+  loadScript("https://kioke.sakenowa.com/widget/widget.js");
+  sakeInfoDiv.innerHTML = `<div data-sakenowa-brand-key="9SRlWm5" data-sakenowa-layout="1"></div>`;
+} else {
+  loadScript("https://kioke.sakenowa.com/widget/widget.js");
+  sakeInfoDiv.innerHTML = `<div data-sakenowa-brand-key="6b1PfAJ" data-sakenowa-layout="1"></div>`;
+}
+      
+      .catch((error) => {
+        console.error("天気データの取得中にエラーが発生しました:", error);
+      });
+  </script>
+</body>
+
+
+
+</html>
